@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>hibernate-envers-audit</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <version.hibernate>5.4.30.Final</version.hibernate>
+        <version.lang3>3.12.0</version.lang3>
+        <version.lombok>1.18.20</version.lombok>
+        <version.liquidbase.plugin>3.5.1</version.liquidbase.plugin>
+
+        <database.host>localhost</database.host>
+        <database.port>5432</database.port>
+        <database.name>postgreslocal</database.name>
+        <database.user>postgreslocal</database.user>
+        <database.pass>1</database.pass>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-envers</artifactId>
+            <version>${version.hibernate}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${version.lang3}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${version.lombok}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <profiles>
+        <profile>
+            <id>liquibase</id>
+            <build>
+                <defaultGoal>process-resources</defaultGoal>
+                <plugins>
+                    <plugin>
+                        <groupId>org.liquibase</groupId>
+                        <artifactId>liquibase-maven-plugin</artifactId>
+                        <version>${version.liquidbase.plugin}</version>
+                        <executions>
+                            <execution>
+                                <id>database</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>update</goal>
+                                </goals>
+                                <configuration>
+                                    <url>jdbc:postgresql://${database.host}:${database.port}/${database.name}</url>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <driver>org.postgresql.Driver</driver>
+                            <username>${database.user}</username>
+                            <password>${database.pass}</password>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.postgresql</groupId>
+                                <artifactId>postgresql</artifactId>
+                                <version>9.4.1207</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
